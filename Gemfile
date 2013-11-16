@@ -21,6 +21,13 @@ gem 'coffee-rails', '~> 4.0.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+gem 'firebase'
+
+gem 'ember-rails'
+gem 'ember-source', '1.1.2'
+
+gem 'omniauth'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
