@@ -28,6 +28,10 @@ gem 'ember-source', '1.1.2'
 
 gem 'omniauth'
 
+group :test, :development do
+  gem 'pry-rails'
+end
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
