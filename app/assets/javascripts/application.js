@@ -12,9 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require foundation
 //= require handlebars
 //= require ember
 //= require ember-data
+//= require vendor/ember-simple-auth
 //= require_self
 //= require app
 
@@ -22,3 +24,5 @@
 App = Ember.Application.create();
 
 //= require_tree .
+
+$(function(){ $(document).foundation(); });
