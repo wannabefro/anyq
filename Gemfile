@@ -31,6 +31,7 @@ gem 'ember-rails'
 gem 'ember-source', '1.1.2'
 
 gem 'omniauth'
+gem 'omniauth-github'
 
 group :test, :development do
   gem 'pry-rails'

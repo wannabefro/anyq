@@ -2,6 +2,12 @@ Anyq::Application.routes.draw do
 
   root 'welcome#index'
 
+  match 'auth/:provider/callback', to: 'api/sessions#create', via: [:get, :post]
+  match '/logout', to: 'api/sessions#destroy', via: [:get, :post]
+
+  namespace :api do
+    resources :users
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
