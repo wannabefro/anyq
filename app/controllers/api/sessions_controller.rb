@@ -13,7 +13,6 @@ class Api::SessionsController < ApplicationController
     end
 
     render 'create'
-
   end
 
   def destroy
