@@ -30,6 +30,8 @@ gem 'firebase'
 gem 'ember-rails'
 gem 'ember-source', '1.1.2'
 
+gem 'active_model_serializers'
+
 gem 'omniauth'
 gem 'omniauth-github'
 

@@ -10,8 +10,9 @@ class Api::SessionsController < ApplicationController
       user.save!
       @success = true
       @token = user.token
+      @user = UserSerializer.new(user).to_json
     end
-
+    
     render 'create'
   end
 
