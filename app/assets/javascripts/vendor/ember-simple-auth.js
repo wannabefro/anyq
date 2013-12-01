@@ -103,10 +103,10 @@ Ember.SimpleAuth.setup = function(container, application, options) {
     @param {Object} sessionData The data to setup the session with (see [Session#setup](#Ember.SimpleAuth.Session_setup)))
   */
   this.externalLoginSucceeded = function(sessionData) {
-    // console.log(JSON.parse($('<div/>').html(sessionData.user).text()));
-    var currentUser = JSON.parse($('<div/>').html(sessionData.user).text());
     session.setup(sessionData);
-    debugger;
+    var currentUser = JSON.parse($('<div/>').html(sessionData.user).text());
+    currentUser.user = [currentUser.user]
+    container.lookup('store:main').pushPayload('user', currentUser);
     container.lookup('route:application').send('loginSucceeded');
   };
 
