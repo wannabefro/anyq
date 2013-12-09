@@ -19,8 +19,8 @@ Ember.SimpleAuth = {};
   initializer like this:
 
   ```javascript
-  Ember.Application.initializer({
     name: 'authentication',
+  Ember.Application.initializer({
     initialize: function(container, application) {
       Ember.SimpleAuth.setup(container, application);
     }
@@ -53,7 +53,10 @@ Ember.SimpleAuth.setup = function(container, application, options) {
   Ember.$.each(['model', 'controller', 'view', 'route'], function(i, component) {
     application.inject(component, 'session', 'simple_auth:session');
   });
-
+  if (session.currentUser){
+    var anonymousUser = [JSON.parse(JSON.parse(session.currentUser)).anonymous_user];
+    container.lookup('store:main').pushPayload('anonymousUser', {anonymousUsers: anonymousUser});
+  };
   Ember.$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
     if (!Ember.isEmpty(session.get('authToken')) && Ember.SimpleAuth.includeAuthorizationHeader(options.url)) {
       jqXHR.setRequestHeader('Authorization', 'Bearer ' + session.get('authToken'));
@@ -103,10 +106,13 @@ Ember.SimpleAuth.setup = function(container, application, options) {
     @param {Object} sessionData The data to setup the session with (see [Session#setup](#Ember.SimpleAuth.Session_setup)))
   */
   this.externalLoginSucceeded = function(sessionData) {
+    var currentUser = $('<div/>').html(sessionData.user).text();
+    sessionData.user = JSON.stringify(currentUser);
     session.setup(sessionData);
-    var currentUser = JSON.parse($('<div/>').html(sessionData.user).text());
-    currentUser.user = [currentUser.user]
-    container.lookup('store:main').pushPayload('user', currentUser);
+    // var id = currentUser.user.id;
+    // currentUser.user = [currentUser.user]
+    // container.lookup('store:main').pushPayload('user', currentUser);
+    // container.lookup('controller:application').currentUser = container.lookup('store:main').getById('user', id);
     container.lookup('route:application').send('loginSucceeded');
   };
 
@@ -169,8 +175,8 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
 
     @method setup
     @param {Object} data The data to set the session up with
-      @param {String} data.access_token The access token that will be included in the `Authorization` header
       @param {String} [data.refresh_token] An optional refresh token that will be used for obtaining fresh tokens
+      @param {String} data.access_token The access token that will be included in the `Authorization` header
       @param {String} [data.expires_in] An optional expiry for the access_token in seconds; if both expires_in and refresh_token are set,
         Ember.SimpleAuth will automatically refresh access tokens before they expire
 
@@ -186,6 +192,7 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
   setup: function(data) {
     data = data || {};
     this.setProperties({
+      currentUser:     data.user,
       authToken:       data.access_token,
       refreshToken:    (data.refresh_token || this.get('refreshToken')),
       authTokenExpiry: (data.expires_in > 0 ? data.expires_in * 1000 : this.get('authTokenExpiry')) || 0
@@ -200,6 +207,7 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
   */
   destroy: function() {
     this.setProperties({
+      currentUser:     undefined,
       authToken:       undefined,
       refreshToken:    undefined,
       authTokenExpiry: undefined
@@ -222,6 +230,7 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
   */
   syncProperties: function() {
     this.setProperties({
+      currentUser:     this.load('currentUser'),
       authToken:       this.load('authToken'),
       refreshToken:    this.load('refreshToken'),
       authTokenExpiry: this.load('authTokenExpiry')
@@ -238,6 +247,8 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
     var value = document.cookie.match(new RegExp(property + '=([^;]+)')) || [];
     if (Ember.isEmpty(value)) {
       return undefined;
+    } else if (property == "currentUser"){
+      return decodeURIComponent(value[1] || '');
     } else {
       return decodeURIComponent(value[1] || '');
     }
@@ -255,6 +266,10 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
     @method authTokenObserver
     @private
   */
+  curretUserObserver: Ember.observer(function() {
+    this.store('currentUser');
+  }, 'currentUser'),
+
   authTokenObserver: Ember.observer(function() {
     this.store('authToken');
   }, 'authToken'),
@@ -544,6 +559,7 @@ Ember.SimpleAuth.ApplicationRouteMixin = Ember.Mixin.create({
       @method logout
     */
     logout: function() {
+      $.post('logout');
       this.get('session').destroy();
       this.transitionTo(Ember.SimpleAuth.routeAfterLogout);
     }

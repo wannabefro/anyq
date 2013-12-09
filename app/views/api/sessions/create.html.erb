@@ -3,7 +3,7 @@
 <body>
 <script>
 <% if @success %>
-  window.opener.Ember.SimpleAuth.externalLoginSucceeded({ access_token: "<%= @token %>", ip: "<%= request.remote_ip %>", user: "<%= @user  %>"});
+  window.opener.Ember.SimpleAuth.externalLoginSucceeded({ access_token: "<%= @token %>", user: "<%= @user  %>"});
 <% else %>
   window.opener.Ember.SimpleAuth.externalLoginFailed({ error: 'invalid_grant' });
 <% end %>

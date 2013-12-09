@@ -10,7 +10,8 @@ class Api::SessionsController < ApplicationController
       user.save!
       @success = true
       @token = user.token
-      @user = UserSerializer.new(user).to_json
+      @anonymous_user = AnonymousUser.where(token: @token).take || anonymous_user
+      @user = AnonymousUserSerializer.new(@anonymous_user).to_json
     end
     
     render 'create'
@@ -30,5 +31,16 @@ class Api::SessionsController < ApplicationController
 
     session.delete(:user_id)
     render :nothing => true
+  end
+
+  private
+  
+  def anonymous_user
+    @anonymous_user = AnonymousUser.new
+    @anonymous_user.ip_address = request.remote_ip
+    @anonymous_user.username = @anonymous_user.set_username
+    @anonymous_user.token = @token
+    @anonymous_user.save!
+    @anonymous_user
   end
 end
