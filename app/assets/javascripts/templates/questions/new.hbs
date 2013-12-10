@@ -1,0 +1,5 @@
+<h1>Ask me some questions</h1>
+{{#form-for model}}
+  {{input body as="text" label="Question" placeholder="The best hint ever"}}
+  <button type="submit" {{action 'save'}} class='button'>Ask Away</button>
+{{/form-for}}

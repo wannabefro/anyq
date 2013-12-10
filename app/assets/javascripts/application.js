@@ -17,6 +17,9 @@
 //= require ember
 //= require ember-data
 //= require vendor/ember-simple-auth
+//= require vendor/ember-easyForm.min
+//= require vendor/firebase
+//= require vendor/emberfire
 //= require_self
 //= require app
 

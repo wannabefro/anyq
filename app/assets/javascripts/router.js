@@ -2,4 +2,7 @@
 
 App.Router.map(function() {
   this.route("index", {path: "/"});
+  this.resource("questions", function(){
+               this.route("new", {path: "/"});
+  });
 });
