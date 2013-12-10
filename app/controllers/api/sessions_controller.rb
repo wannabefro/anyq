@@ -3,17 +3,18 @@ class Api::SessionsController < ApplicationController
 
   def create
     user = User.from_omniauth(env['omniauth.auth'])
-    session[:user_id] = user.id
 
     if user
       user.token = SecureRandom.hex
       user.save!
       @success = true
       @token = user.token
+      @anonymous_user = AnonymousUser.where(token: @token).take || anonymous_user
+      session[:user_id] = @anonymous_user.id
+      @user = AnonymousUserSerializer.new(@anonymous_user, {current_user: true}).to_json
     end
-
+    
     render 'create'
-
   end
 
   def destroy
@@ -30,5 +31,16 @@ class Api::SessionsController < ApplicationController
 
     session.delete(:user_id)
     render :nothing => true
+  end
+
+  private
+  
+  def anonymous_user
+    @anonymous_user = AnonymousUser.new
+    @anonymous_user.ip_address = request.remote_ip
+    @anonymous_user.username = @anonymous_user.set_username
+    @anonymous_user.token = @token
+    @anonymous_user.save!
+    @anonymous_user
   end
 end

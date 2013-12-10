@@ -1,0 +1,13 @@
+<html>
+<head></head>
+<body>
+<script>
+<% if @success %>
+  window.opener.Ember.SimpleAuth.externalLoginSucceeded({ access_token: "<%= @token %>", user: "<%= @user  %>"});
+<% else %>
+  window.opener.Ember.SimpleAuth.externalLoginFailed({ error: 'invalid_grant' });
+<% end %>
+window.close();
+</script>
+</body>
+</html>

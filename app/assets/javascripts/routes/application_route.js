@@ -1,8 +1,4 @@
 App.ApplicationRoute = Ember.Route.extend(Ember.SimpleAuth.ApplicationRouteMixin, {
-  // model: function(){
-  //   return this.store.find('user');
-  // },
-
   actions: {
     login: function(provider) {
       if (window._current_environment === 'development'){
