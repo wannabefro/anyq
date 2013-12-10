@@ -54,8 +54,10 @@ Ember.SimpleAuth.setup = function(container, application, options) {
     application.inject(component, 'session', 'simple_auth:session');
   });
   if (session.currentUser){
+    var store = container.lookup('store:main');
     var anonymousUser = [JSON.parse(JSON.parse(session.currentUser)).anonymous_user];
-    container.lookup('store:main').pushPayload('anonymousUser', {anonymousUsers: anonymousUser});
+    store.pushPayload('anonymousUser', {anonymousUsers: anonymousUser});
+    session.set('user', store.filter('anonymousUser').filterBy('currentUser', true)[0]);
   };
   Ember.$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
     if (!Ember.isEmpty(session.get('authToken')) && Ember.SimpleAuth.includeAuthorizationHeader(options.url)) {
@@ -112,7 +114,8 @@ Ember.SimpleAuth.setup = function(container, application, options) {
     // var id = currentUser.user.id;
     // currentUser.user = [currentUser.user]
     // container.lookup('store:main').pushPayload('user', currentUser);
-    // container.lookup('controller:application').currentUser = container.lookup('store:main').getById('user', id);
+    var anonymousUser = [JSON.parse(JSON.parse(session.currentUser)).anonymous_user];
+    container.lookup('store:main').pushPayload('anonymousUser', {anonymousUsers: anonymousUser});
     container.lookup('route:application').send('loginSucceeded');
   };
 

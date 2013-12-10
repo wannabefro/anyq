@@ -3,7 +3,6 @@ class Api::SessionsController < ApplicationController
 
   def create
     user = User.from_omniauth(env['omniauth.auth'])
-    session[:user_id] = user.id
 
     if user
       user.token = SecureRandom.hex
@@ -11,7 +10,8 @@ class Api::SessionsController < ApplicationController
       @success = true
       @token = user.token
       @anonymous_user = AnonymousUser.where(token: @token).take || anonymous_user
-      @user = AnonymousUserSerializer.new(@anonymous_user).to_json
+      session[:user_id] = @anonymous_user.id
+      @user = AnonymousUserSerializer.new(@anonymous_user, {current_user: true}).to_json
     end
     
     render 'create'
