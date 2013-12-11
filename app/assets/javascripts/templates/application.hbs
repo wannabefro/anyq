@@ -14,22 +14,22 @@
         <li><a href="#">Sign In</a></li>
         <li><a href="#" data-reveal-id="signUpModal">Sign Up</a></li>
       {{/if}}
-      <!-- <li class="has-dropdown"> -->
-      <!-- <a href="#">Right Button with Dropdown</a> -->
-      <!-- <ul class="dropdown"> -->
-      <!--   <li><a href="#">First link in dropdown</a></li> -->
-      <!-- </ul> -->
-      <!-- </li> -->
     </ul>
 
-    <!-- Left Nav Section -->
     <ul class="left">
       <li><a href="#">Dashboard</a></li>
       <li>{{#link-to 'questions.new'}}Questions{{/link-to}}</li>
+      <li><a href="#">Feedback</a></li>
       <li><a href="#">Admin</a></li>
     </ul>
   </section>
 </nav>
+{{#if session.errors}}
+<div data-alert class="alert-box">
+  {{session.errors}}
+  <a href="#" class="close">&times;</a>
+</div>
+{{/if}}
 
 <div class="row">
   {{outlet}}

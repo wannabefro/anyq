@@ -41,7 +41,7 @@ Ember.SimpleAuth = {};
 **/
 Ember.SimpleAuth.setup = function(container, application, options) {
   options = options || {};
-  this.routeAfterLogin      = options.routeAfterLogin || 'index';
+  this.routeAfterLogin      = options.routeAfterLogin || 'questions.new';
   this.routeAfterLogout     = options.routeAfterLogout || 'index';
   this.loginRoute           = options.loginRoute || 'login';
   this.serverTokenEndpoint  = options.serverTokenEndpoint || '/token';
@@ -111,12 +111,10 @@ Ember.SimpleAuth.setup = function(container, application, options) {
     var currentUser = $('<div/>').html(sessionData.user).text();
     sessionData.user = JSON.stringify(currentUser);
     session.setup(sessionData);
-    // var id = currentUser.user.id;
-    // currentUser.user = [currentUser.user]
-    // container.lookup('store:main').pushPayload('user', currentUser);
     var anonymousUser = [JSON.parse(JSON.parse(session.currentUser)).anonymous_user];
     container.lookup('store:main').pushPayload('anonymousUser', {anonymousUsers: anonymousUser});
     container.lookup('route:application').send('loginSucceeded');
+    session.set('errors', undefined);
   };
 
   /**
@@ -210,6 +208,8 @@ Ember.SimpleAuth.Session = Ember.Object.extend({
   */
   destroy: function() {
     this.setProperties({
+      errors:          undefined,
+      user:            undefined,
       currentUser:     undefined,
       authToken:       undefined,
       refreshToken:    undefined,
@@ -371,10 +371,11 @@ Ember.SimpleAuth.AuthenticatedRouteMixin = Ember.Mixin.create({
   */
   triggerLogin: function(transition) {
     this.set('session.attemptedTransition', transition);
+    this.set('session.errors', "You need to sign in first");
     if (Ember.canInvoke(transition, 'send')) {
-      transition.send('login');
+      transition.send('index');
     } else {
-      this.send('login');
+      this.send('index');
     }
   }
 });

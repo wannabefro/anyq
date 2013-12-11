@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require foundation
 //= require handlebars
 //= require ember
 //= require ember-data
@@ -20,6 +19,7 @@
 //= require vendor/ember-easyForm.min
 //= require vendor/firebase
 //= require vendor/emberfire
+//= require foundation
 //= require_self
 //= require app
 
