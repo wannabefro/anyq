@@ -3,6 +3,13 @@
 </div>
 <div class="large-8 columns">
   {{#each}}
-  <h3>{{body}}</h3>
+    <h3>
+      <button class='button tiny' {{action 'create' this target='controllers.vote'}}>+1</button>{{question.body}}
+      {{#if votes}}
+        {{votes.length}} votes
+      {{else}}
+        0 votes
+      {{/if}}
+    </h3>
   {{/each}}
 </div>
